@@ -1,0 +1,9 @@
+{
+  "id": "jarvis-outpost-sync",
+  "name": "Jarvis Outpost Sync",
+  "version": "1.0.16",
+  "minAppVersion": "1.13.0",
+  "description": "从自托管 Jarvis Outpost API 只读同步笔记。无默认服务器。",
+  "author": "jarvis-outpost",
+  "isDesktopOnly": false
+}

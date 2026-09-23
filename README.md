@@ -17,14 +17,14 @@
 
 ## What it does
 
-Jarvis Outpost Sync is an Obsidian **read-only** client for a self-hosted [Jarvis Outpost](https://jarvis.fluox.cn) control plane:
+Jarvis Outpost Sync is an Obsidian **read-only** client for a **self-hosted** Jarvis Outpost control plane:
 
-1. You set the **API base URL** (nothing is hard-coded; no default server)
+1. You set the **API base URL** yourself (nothing is hard-coded; no default server)
 2. You pair with a one-time code from the Jarvis PWA → the plugin stores a **device token** in local plugin data
-3. On sync, it pulls `main` vault content over the jail-scoped vault API into your open vault folder
+3. On sync, it pulls vault content from the jail-scoped vault API into your open vault folder
 4. Status bar shows idle / syncing / last result
 
-It does **not** write back to the server vault through this plugin. Authoring stays in Obsidian / Jarvis chat on the host.
+It does **not** write back to the server vault through this plugin. Authoring stays in Obsidian or on the host.
 
 Plugin id: `jarvis-outpost-sync`.
 
@@ -38,7 +38,7 @@ Plugin id: `jarvis-outpost-sync`.
 
 Requires Obsidian **1.13.0+**.
 
-This repository is the **public distribution** surface (manifest, releases, community README). Application source lives in a separate private monorepo.
+This repository is the **public distribution** surface (manifest, releases, community README). Application source is maintained separately and is not published here.
 
 ---
 
@@ -47,7 +47,7 @@ This repository is the **public distribution** surface (manifest, releases, comm
 | Action | How |
 | --- | --- |
 | Open settings | Settings → Jarvis Outpost Sync |
-| API address | e.g. `https://jarvis.fluox.cn` (no trailing slash) |
+| API address | Your Outpost origin, e.g. `https://your-host.example` (no trailing slash) |
 | Pair | Generate a pair code in the Jarvis PWA → paste into the plugin |
 | Sync now | Command **Jarvis：立即同步** or the ribbon / status affordance |
 | Status | Status bar shows idle / syncing / errors |
@@ -59,10 +59,10 @@ Token refresh uses the Outpost device-token refresh endpoint. Revoke pairing fro
 ## Notes & limits
 
 - **Read-only** sync into the vault you opened in Obsidian
-- You must run (or use) a **self-hosted** Outpost API; this plugin does not ship a cloud backend
+- You must run your own Outpost API; this plugin does not ship a cloud backend
 - Device token stays in this machine’s plugin `data.json`
 - Do not install lookalike plugins with a different id
-- Pairing can be disabled on the server (`PLUGIN_PAIRING_ENABLED=false`)
+- The server administrator can disable new pairing
 
 ---
 

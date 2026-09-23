@@ -3,7 +3,7 @@
   "name": "Jarvis Outpost Sync",
   "version": "1.0.16",
   "minAppVersion": "1.13.0",
-  "description": "从自托管 Jarvis Outpost API 只读同步笔记。无默认服务器。",
+  "description": "Read-only incremental sync from a self-hosted Jarvis Outpost API. No default server.",
   "author": "jarvis-outpost",
   "isDesktopOnly": false
 }

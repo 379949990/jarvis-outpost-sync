@@ -38,7 +38,7 @@ Plugin id: `jarvis-outpost-sync`.
 
 Requires Obsidian **1.13.0+**.
 
-This repository is the **public distribution** surface (manifest, releases, community README). Application source is maintained separately and is not published here.
+This repository publishes the plugin **source** under `src/` (for community review) and installable assets on [Releases](https://github.com/379949990/jarvis-outpost-sync/releases).
 
 ---
 

@@ -108,14 +108,32 @@ async function writeFileContent(
   plugin: JarvisSyncPlugin,
   absPath: string,
   content: string,
+  encoding: "utf-8" | "base64" = "utf-8",
 ): Promise<void> {
   await ensureParentDirs(plugin, absPath);
+  if (encoding === "base64") {
+    const binary = base64ToArrayBuffer(content);
+    const existing = plugin.app.vault.getAbstractFileByPath(absPath);
+    if (existing instanceof TFile) {
+      await plugin.app.vault.modifyBinary(existing, binary);
+      return;
+    }
+    await plugin.app.vault.createBinary(absPath, binary);
+    return;
+  }
   const existing = plugin.app.vault.getAbstractFileByPath(absPath);
   if (existing instanceof TFile) {
     await plugin.app.vault.modify(existing, content);
     return;
   }
   await plugin.app.vault.adapter.write(absPath, content);
+}
+
+function base64ToArrayBuffer(b64: string): ArrayBuffer {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes.buffer;
 }
 
 /** 按 tree size + 文件数切批，避免触发服务端 batch_too_large。 */
@@ -157,7 +175,9 @@ async function downloadChunkWithRetry(
   base: string,
   token: string,
   chunk: string[],
-): Promise<Record<string, { content: string; hash: string }>> {
+): Promise<
+  Record<string, { content: string; hash: string; encoding?: "utf-8" | "base64" }>
+> {
   if (chunk.length === 0) return {};
   if (chunk.length === 1) {
     const path = chunk[0];
@@ -260,7 +280,12 @@ export async function runIncrementalSync(
       const file = files[path];
       if (!file) continue;
       const abs = joinVaultSubdir(plugin.settings.vaultSubdir, path);
-      await writeFileContent(plugin, abs, file.content);
+      await writeFileContent(
+        plugin,
+        abs,
+        file.content,
+        file.encoding === "base64" ? "base64" : "utf-8",
+      );
       local.files[path] = file.hash;
       updated += 1;
     }

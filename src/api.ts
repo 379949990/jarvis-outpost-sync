@@ -243,7 +243,7 @@ export async function vaultFile(
   apiBaseUrl: string,
   token: string,
   path: string,
-): Promise<{ content: string; hash: string }> {
+): Promise<{ content: string; hash: string; encoding: "utf-8" | "base64" }> {
   const { status, body } = await apiJson({
     url: `${apiBaseUrl}/api/vault/file?path=${encodeURIComponent(path)}`,
     headers: authHeaders(token),
@@ -258,9 +258,12 @@ export async function vaultFile(
           : "batch_failed",
     );
   }
+  const encoding =
+    body.encoding === "base64" ? ("base64" as const) : ("utf-8" as const);
   return {
     content: typeof body.content === "string" ? body.content : "",
     hash: typeof body.hash === "string" ? body.hash : "",
+    encoding,
   };
 }
 
@@ -269,7 +272,10 @@ export async function vaultFilesBatch(
   token: string,
   paths: string[],
 ): Promise<{
-  files: Record<string, { content: string; hash: string }>;
+  files: Record<
+    string,
+    { content: string; hash: string; encoding?: "utf-8" | "base64" }
+  >;
   missing: string[];
 }> {
   const { status, body } = await apiJson({
@@ -294,7 +300,10 @@ export async function vaultFilesBatch(
   return {
     files:
       body.files && typeof body.files === "object"
-        ? (body.files as Record<string, { content: string; hash: string }>)
+        ? (body.files as Record<
+            string,
+            { content: string; hash: string; encoding?: "utf-8" | "base64" }
+          >)
         : {},
     missing: Array.isArray(body.missing) ? (body.missing as string[]) : [],
   };

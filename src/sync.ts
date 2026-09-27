@@ -65,10 +65,7 @@ async function readManifest(plugin: JarvisSyncPlugin): Promise<SyncManifest> {
   }
 }
 
-async function writeManifest(
-  plugin: JarvisSyncPlugin,
-  manifest: SyncManifest,
-): Promise<void> {
+async function writeManifest(plugin: JarvisSyncPlugin, manifest: SyncManifest): Promise<void> {
   const adapter = plugin.app.vault.adapter;
   if (!(await adapter.exists(MANIFEST_DIR))) {
     await adapter.mkdir(MANIFEST_DIR);
@@ -86,10 +83,7 @@ async function writeManifest(
   );
 }
 
-async function ensureParentDirs(
-  plugin: JarvisSyncPlugin,
-  absPath: string,
-): Promise<void> {
+async function ensureParentDirs(plugin: JarvisSyncPlugin, absPath: string): Promise<void> {
   const adapter = plugin.app.vault.adapter;
   const parts = absPath.split("/");
   if (parts.length <= 1) return;
@@ -137,10 +131,7 @@ function base64ToArrayBuffer(b64: string): ArrayBuffer {
 }
 
 /** 按 tree size + 文件数切批，避免触发服务端 batch_too_large。 */
-export function packDownloadBatches(
-  paths: string[],
-  sizeByPath: Map<string, number>,
-): string[][] {
+export function packDownloadBatches(paths: string[], sizeByPath: Map<string, number>): string[][] {
   const batches: string[][] = [];
   let cur: string[] = [];
   let bytes = 0;
@@ -155,10 +146,7 @@ export function packDownloadBatches(
       batches.push([path]);
       continue;
     }
-    if (
-      cur.length > 0 &&
-      (cur.length >= BATCH_MAX_FILES || bytes + size > BATCH_MAX_BYTES)
-    ) {
+    if (cur.length > 0 && (cur.length >= BATCH_MAX_FILES || bytes + size > BATCH_MAX_BYTES)) {
       batches.push(cur);
       cur = [];
       bytes = 0;
@@ -175,9 +163,7 @@ async function downloadChunkWithRetry(
   base: string,
   token: string,
   chunk: string[],
-): Promise<
-  Record<string, { content: string; hash: string; encoding?: "utf-8" | "base64" }>
-> {
+): Promise<Record<string, { content: string; hash: string; encoding?: "utf-8" | "base64" }>> {
   if (chunk.length === 0) return {};
   if (chunk.length === 1) {
     const path = chunk[0];
@@ -199,18 +185,8 @@ async function downloadChunkWithRetry(
     const code = normalizeApiError(err).error;
     if (code !== "batch_too_large" && code !== "batch_too_many_files") throw err;
     const mid = Math.ceil(chunk.length / 2);
-    const left = await downloadChunkWithRetry(
-      withAuthRetry,
-      base,
-      token,
-      chunk.slice(0, mid),
-    );
-    const right = await downloadChunkWithRetry(
-      withAuthRetry,
-      base,
-      token,
-      chunk.slice(mid),
-    );
+    const left = await downloadChunkWithRetry(withAuthRetry, base, token, chunk.slice(0, mid));
+    const right = await downloadChunkWithRetry(withAuthRetry, base, token, chunk.slice(mid));
     return { ...left, ...right };
   }
 }
@@ -222,9 +198,7 @@ export type SyncResult = {
   treeSha: string;
 };
 
-export async function runIncrementalSync(
-  plugin: JarvisSyncPlugin,
-): Promise<SyncResult> {
+export async function runIncrementalSync(plugin: JarvisSyncPlugin): Promise<SyncResult> {
   const base = plugin.settings.apiBaseUrl;
   if (!base) throw apiError(0, "api_base_required");
   if (!plugin.settings.deviceToken) {
@@ -280,12 +254,7 @@ export async function runIncrementalSync(
       const file = files[path];
       if (!file) continue;
       const abs = joinVaultSubdir(plugin.settings.vaultSubdir, path);
-      await writeFileContent(
-        plugin,
-        abs,
-        file.content,
-        file.encoding === "base64" ? "base64" : "utf-8",
-      );
+      await writeFileContent(plugin, abs, file.content, file.encoding === "base64" ? "base64" : "utf-8");
       local.files[path] = file.hash;
       updated += 1;
     }

@@ -56,13 +56,11 @@ export function normalizeApiError(err: unknown): ApiError {
   if (err && typeof err === "object") {
     const o = err as { status?: unknown; error?: unknown; code?: unknown };
     if (typeof o.error === "string" && o.error.trim()) {
-      const status =
-        typeof o.status === "number" && Number.isFinite(o.status) ? o.status : 0;
+      const status = typeof o.status === "number" && Number.isFinite(o.status) ? o.status : 0;
       return { status, error: o.error.trim() };
     }
     if (typeof o.code === "string" && o.code.trim()) {
-      const status =
-        typeof o.status === "number" && Number.isFinite(o.status) ? o.status : 0;
+      const status = typeof o.status === "number" && Number.isFinite(o.status) ? o.status : 0;
       return { status, error: o.code.trim() };
     }
   }
@@ -122,11 +120,7 @@ export type PairResult = {
   name: string;
 };
 
-export async function pairWithCode(
-  apiBaseUrl: string,
-  code: string,
-  deviceName: string,
-): Promise<PairResult> {
+export async function pairWithCode(apiBaseUrl: string, code: string, deviceName: string): Promise<PairResult> {
   const { status, body } = await apiJson({
     url: `${apiBaseUrl}/api/auth/pair`,
     method: "POST",
@@ -156,10 +150,7 @@ export async function pairWithCode(
   };
 }
 
-export async function refreshDeviceToken(
-  apiBaseUrl: string,
-  refreshToken: string,
-): Promise<PairResult> {
+export async function refreshDeviceToken(apiBaseUrl: string, refreshToken: string): Promise<PairResult> {
   const { status, body } = await apiJson({
     url: `${apiBaseUrl}/api/auth/token/refresh`,
     method: "POST",
@@ -170,10 +161,7 @@ export async function refreshDeviceToken(
     body: JSON.stringify({ refreshToken }),
   });
   if (status < 200 || status >= 300) {
-    throw apiError(
-      status,
-      typeof body.error === "string" ? body.error : "refresh_failed",
-    );
+    throw apiError(status, typeof body.error === "string" ? body.error : "refresh_failed");
   }
   const token = typeof body.token === "string" ? body.token : "";
   const nextRefresh = typeof body.refreshToken === "string" ? body.refreshToken : "";
@@ -199,11 +187,7 @@ export async function vaultHead(apiBaseUrl: string, token: string): Promise<Vaul
   if (status < 200 || status >= 300) {
     throw apiError(
       status,
-      typeof body.error === "string"
-        ? body.error
-        : status === 401
-          ? "unauthorized"
-          : "head_failed",
+      typeof body.error === "string" ? body.error : status === 401 ? "unauthorized" : "head_failed",
     );
   }
   const tree_sha = typeof body.tree_sha === "string" ? body.tree_sha : "";
@@ -218,10 +202,7 @@ export async function vaultHead(apiBaseUrl: string, token: string): Promise<Vaul
 
 export type VaultTreeItem = { path: string; hash: string; size: number };
 
-export async function vaultTree(
-  apiBaseUrl: string,
-  token: string,
-): Promise<VaultTreeItem[]> {
+export async function vaultTree(apiBaseUrl: string, token: string): Promise<VaultTreeItem[]> {
   const { status, body } = await apiJson({
     url: `${apiBaseUrl}/api/vault/tree`,
     headers: authHeaders(token),
@@ -229,11 +210,7 @@ export async function vaultTree(
   if (status < 200 || status >= 300) {
     throw apiError(
       status,
-      typeof body.error === "string"
-        ? body.error
-        : status === 401
-          ? "unauthorized"
-          : "tree_failed",
+      typeof body.error === "string" ? body.error : status === 401 ? "unauthorized" : "tree_failed",
     );
   }
   return Array.isArray(body.items) ? (body.items as VaultTreeItem[]) : [];
@@ -251,15 +228,10 @@ export async function vaultFile(
   if (status < 200 || status >= 300) {
     throw apiError(
       status,
-      typeof body.error === "string"
-        ? body.error
-        : status === 401
-          ? "unauthorized"
-          : "batch_failed",
+      typeof body.error === "string" ? body.error : status === 401 ? "unauthorized" : "batch_failed",
     );
   }
-  const encoding =
-    body.encoding === "base64" ? ("base64" as const) : ("utf-8" as const);
+  const encoding = body.encoding === "base64" ? ("base64" as const) : ("utf-8" as const);
   return {
     content: typeof body.content === "string" ? body.content : "",
     hash: typeof body.hash === "string" ? body.hash : "",
@@ -272,10 +244,7 @@ export async function vaultFilesBatch(
   token: string,
   paths: string[],
 ): Promise<{
-  files: Record<
-    string,
-    { content: string; hash: string; encoding?: "utf-8" | "base64" }
-  >;
+  files: Record<string, { content: string; hash: string; encoding?: "utf-8" | "base64" }>;
   missing: string[];
 }> {
   const { status, body } = await apiJson({
@@ -290,20 +259,13 @@ export async function vaultFilesBatch(
   if (status < 200 || status >= 300) {
     throw apiError(
       status,
-      typeof body.error === "string"
-        ? body.error
-        : status === 401
-          ? "unauthorized"
-          : "batch_failed",
+      typeof body.error === "string" ? body.error : status === 401 ? "unauthorized" : "batch_failed",
     );
   }
   return {
     files:
       body.files && typeof body.files === "object"
-        ? (body.files as Record<
-            string,
-            { content: string; hash: string; encoding?: "utf-8" | "base64" }
-          >)
+        ? (body.files as Record<string, { content: string; hash: string; encoding?: "utf-8" | "base64" }>)
         : {},
     missing: Array.isArray(body.missing) ? (body.missing as string[]) : [],
   };

@@ -1,11 +1,5 @@
 import { Notice, Plugin } from "obsidian";
-import {
-  formatApiError,
-  normalizeApiError,
-  pairWithCode,
-  refreshDeviceToken,
-  apiError,
-} from "./api.js";
+import { formatApiError, normalizeApiError, pairWithCode, refreshDeviceToken, apiError } from "./api.js";
 import { JarvisSyncSettingTab } from "./settings.js";
 import { notifySyncError, notifySyncResult, runIncrementalSync } from "./sync.js";
 import { DEFAULT_SETTINGS, type JarvisSyncSettings } from "./types.js";
@@ -53,11 +47,7 @@ export default class JarvisSyncPlugin extends Plugin {
   }
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign(
-      {},
-      DEFAULT_SETTINGS,
-      (await this.loadData()) as Partial<JarvisSyncSettings>,
-    );
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, (await this.loadData()) as Partial<JarvisSyncSettings>);
   }
 
   async saveSettings(): Promise<void> {
@@ -79,11 +69,7 @@ export default class JarvisSyncPlugin extends Plugin {
     if (!code.trim()) {
       throw apiError(0, "pairing_code_required");
     }
-    const result = await pairWithCode(
-      this.settings.apiBaseUrl,
-      code,
-      this.settings.deviceName || "Obsidian",
-    );
+    const result = await pairWithCode(this.settings.apiBaseUrl, code, this.settings.deviceName || "Obsidian");
     this.settings.deviceToken = result.token;
     this.settings.refreshToken = result.refreshToken;
     this.settings.deviceId = result.deviceId;
@@ -106,10 +92,7 @@ export default class JarvisSyncPlugin extends Plugin {
     if (!this.settings.apiBaseUrl || !this.settings.refreshToken) {
       throw apiError(401, "unauthorized");
     }
-    const result = await refreshDeviceToken(
-      this.settings.apiBaseUrl,
-      this.settings.refreshToken,
-    );
+    const result = await refreshDeviceToken(this.settings.apiBaseUrl, this.settings.refreshToken);
     this.settings.deviceToken = result.token;
     this.settings.refreshToken = result.refreshToken;
     this.settings.deviceId = result.deviceId;
@@ -137,11 +120,7 @@ export default class JarvisSyncPlugin extends Plugin {
     try {
       const result = await runIncrementalSync(this);
       notifySyncResult(result, reason);
-      this.setStatus(
-        result.skipped
-          ? `已是最新 @${result.treeSha.slice(0, 7)}`
-          : `已更新 ${result.updated} 个文件`,
-      );
+      this.setStatus(result.skipped ? `已是最新 @${result.treeSha.slice(0, 7)}` : `已更新 ${result.updated} 个文件`);
     } catch (err) {
       notifySyncError(err);
       const apiErr = normalizeApiError(err);

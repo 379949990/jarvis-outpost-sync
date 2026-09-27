@@ -32,7 +32,7 @@ Plugin id: `jarvis-outpost-sync`.
 
 ## Install
 
-1. Community plugins → search **Jarvis Outpost Sync** *(after directory publish)*, or
+1. Community plugins → search **Jarvis Outpost Sync** _(after directory publish)_, or
 2. [BRAT](https://github.com/TfTHacker/obsidian42-brat): add `379949990/jarvis-outpost-sync`, or
 3. Manual: put `main.js`, `manifest.json`, and `styles.css` from [Releases](https://github.com/379949990/jarvis-outpost-sync/releases) into `.obsidian/plugins/jarvis-outpost-sync/`
 
@@ -44,13 +44,13 @@ This repository publishes the plugin **source** under `src/` (for community revi
 
 ## Usage
 
-| Action | How |
-| --- | --- |
-| Open settings | Settings → Jarvis Outpost Sync |
-| API address | Your Outpost origin, e.g. `https://your-host.example` (no trailing slash) |
-| Pair | Generate a pair code in the Jarvis PWA → paste into the plugin |
-| Sync now | Command **Jarvis：立即同步** or the ribbon / status affordance |
-| Status | Status bar shows idle / syncing / errors |
+| Action        | How                                                                       |
+| ------------- | ------------------------------------------------------------------------- |
+| Open settings | Settings → Jarvis Outpost Sync                                            |
+| API address   | Your Outpost origin, e.g. `https://your-host.example` (no trailing slash) |
+| Pair          | Generate a pair code in the Jarvis PWA → paste into the plugin            |
+| Sync now      | Command **Jarvis：立即同步** or the ribbon / status affordance            |
+| Status        | Status bar shows idle / syncing / errors                                  |
 
 Token refresh uses the Outpost device-token refresh endpoint. Revoke pairing from the host if the device should lose access.
 

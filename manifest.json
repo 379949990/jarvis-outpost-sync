@@ -1,7 +1,7 @@
 {
   "id": "jarvis-outpost-sync",
   "name": "Jarvis Outpost Sync",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "minAppVersion": "1.13.0",
   "description": "Read-only incremental sync from a self-hosted Jarvis Outpost API. No default server.",
   "author": "jarvis-outpost",
